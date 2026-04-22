@@ -1,0 +1,68 @@
+readme.txt
+# --- OS Specific ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# --- Go (Backend) ---
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+# Test binary, built with `go test -c`
+*.test
+# Output of the go coverage tool, produced by `go test -coverprofile`
+*.out
+# Dependency directory (only if using 'go mod vendor')
+vendor/
+# sqlc generated files (optional: usually you keep these, but ignore if you prefer)
+# db/gen/
+
+# --- Node.js / React (Admin Side) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+build/
+dist/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- Flutter / Dart (Mobile App) ---
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+# Flutter web build artifacts
+build/web/
+# Generated plugin files
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+android/local.properties
+android/key.properties
+*.moved-aside
+*.lock
+*.scope_lock
+
+# --- Environment & Secrets (CRITICAL) ---
+.env
+*.env
+config.yaml
+# Keep the example, ignore the real one
+!config.example.yaml
+secrets.json
+service-account-file.json
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
