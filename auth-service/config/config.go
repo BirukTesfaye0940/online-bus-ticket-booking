@@ -18,6 +18,11 @@ func LoadConfig() (*Config, error) {
 	viper.SetDefault("TOKEN_DURATION", 24*time.Hour)
 	viper.SetDefault("JWT_SECRET", "super-secret-key")
 
+	// Load .env file if present (ignored in prod where real env vars are set)
+	viper.SetConfigFile(".env")
+	viper.SetConfigType("env")
+	_ = viper.ReadInConfig() // non-fatal if .env is missing
+
 	viper.AutomaticEnv()
 
 	var config Config
