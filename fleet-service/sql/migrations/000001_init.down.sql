@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS seat_layouts;
+DROP TABLE IF EXISTS schedules;
+DROP TABLE IF EXISTS routes;
+DROP TABLE IF EXISTS buses;

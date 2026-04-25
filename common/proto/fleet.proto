@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package fleet;
+
+option go_package = "github.com/biruk/bus-ticket/fleet-service/proto";
+
+service FleetService {
+  rpc CreateBus(CreateBusRequest) returns (BusResponse);
+  rpc ListBuses(ListBusesRequest) returns (ListBusesResponse);
+  
+  rpc CreateRoute(CreateRouteRequest) returns (RouteResponse);
+  rpc ListRoutes(ListRoutesRequest) returns (ListRoutesResponse);
+  
+  rpc CreateSchedule(CreateScheduleRequest) returns (ScheduleResponse);
+  rpc ListSchedules(ListSchedulesRequest) returns (ListSchedulesResponse);
+  
+  rpc CreateSeatLayout(CreateSeatLayoutRequest) returns (SeatLayoutResponse);
+  rpc ListBusSeats(ListBusSeatsRequest) returns (ListBusSeatsResponse);
+
+  rpc GetManifest(GetManifestRequest) returns (GetManifestResponse);
+}
+
+message BusResponse {
+  string id = 1;
+  string plate_number = 2;
+  string operator_name = 3;
+  int32 capacity = 4;
+}
+
+message CreateBusRequest {
+  string plate_number = 1;
+  string operator_name = 2;
+  int32 capacity = 3;
+}
+
+message ListBusesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListBusesResponse {
+  repeated BusResponse buses = 1;
+}
+
+message RouteResponse {
+  string id = 1;
+  string origin = 2;
+  string destination = 3;
+  int32 distance_km = 4;
+  int32 estimated_duration_mins = 5;
+}
+
+message CreateRouteRequest {
+  string origin = 1;
+  string destination = 2;
+  int32 distance_km = 3;
+  int32 estimated_duration_mins = 4;
+}
+
+message ListRoutesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListRoutesResponse {
+  repeated RouteResponse routes = 1;
+}
+
+message ScheduleResponse {
+  string id = 1;
+  string route_id = 2;
+  string bus_id = 3;
+  string departure_time = 4;
+  string arrival_time = 5;
+  double price = 6;
+  string status = 7;
+}
+
+message CreateScheduleRequest {
+  string route_id = 1;
+  string bus_id = 2;
+  string departure_time = 3;
+  string arrival_time = 4;
+  double price = 5;
+  string status = 6;
+}
+
+message ListSchedulesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListSchedulesResponse {
+  repeated ScheduleResponse schedules = 1;
+}
+
+message SeatLayoutResponse {
+  string id = 1;
+  string bus_id = 2;
+  string seat_number = 3;
+  bool is_window = 4;
+  bool is_aisle = 5;
+}
+
+message CreateSeatLayoutRequest {
+  string bus_id = 1;
+  string seat_number = 2;
+  bool is_window = 3;
+  bool is_aisle = 4;
+}
+
+message ListBusSeatsRequest {
+  string bus_id = 1;
+}
+
+message ListBusSeatsResponse {
+  repeated SeatLayoutResponse seats = 1;
+}
+
+message GetManifestRequest {
+  string schedule_id = 1;
+}
+
+message GetManifestResponse {
+  string schedule_id = 1;
+  string operator_name = 2;
+  string plate_number = 3;
+  repeated string booked_seats = 4;
+}
