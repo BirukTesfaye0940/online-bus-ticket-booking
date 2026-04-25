@@ -6,6 +6,8 @@ import (
 
 	"github.com/biruk/bus-ticket/api-gateway/internal/middleware"
 	pb "github.com/biruk/bus-ticket/api-gateway/internal/proto"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 // AuthHandler holds the gRPC client for the Auth Service.
@@ -54,7 +56,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, resp)
+	writeProtoJSON(w, http.StatusCreated, resp)
 }
 
 // Login handles POST /api/v1/auth/login
@@ -74,10 +76,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, resp)
+	writeProtoJSON(w, http.StatusOK, resp)
 }
 
-// GetMe handles GET /api/v1/auth/me (protected)
 func (h *AuthHandler) GetMe(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
 	if !ok || userID == "" {
@@ -91,13 +92,32 @@ func (h *AuthHandler) GetMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, resp)
+	writeProtoJSON(w, http.StatusOK, resp)
 }
 
-// --- Helpers ---
 
+// writeJSON writes plain Go values (e.g. error maps) as JSON.
 func writeJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(data)
+}
+
+// writeProtoJSON writes a Protobuf message as JSON using protojson,
+// which serializes enum fields as their string names (e.g. "ROLE_PASSENGER")
+// instead of integers.
+var protoMarshaler = protojson.MarshalOptions{
+	UseProtoNames:   true,  // use snake_case field names matching the .proto file
+	EmitUnpopulated: false, // omit zero-value fields
+}
+
+func writeProtoJSON(w http.ResponseWriter, status int, msg proto.Message) {
+	b, err := protoMarshaler.Marshal(msg)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to marshal response"})
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_, _ = w.Write(b)
 }

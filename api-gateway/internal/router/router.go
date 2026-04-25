@@ -14,10 +14,6 @@ import (
 func New(authClient pb.AuthServiceClient, logger *zap.Logger, rps float64, burst int) *chi.Mux {
 	r := chi.NewRouter()
 
-	// --- Internal: Prometheus metrics scrape endpoint ---
-	// Exposed on the same port; in prod you can move this to a separate internal port.
-	r.Handle("/metrics", promhttp.Handler())
-
 	// --- Global middleware (applied to every request) ---
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Metrics) // ← Prometheus counter/histogram per request
@@ -25,6 +21,9 @@ func New(authClient pb.AuthServiceClient, logger *zap.Logger, rps float64, burst
 	r.Use(middleware.Recoverer(logger))
 	r.Use(chiMiddleware.StripSlashes)
 	r.Use(middleware.RateLimiter(rps, burst))
+
+	// --- Internal: Prometheus metrics scrape endpoint (must come AFTER middleware) ---
+	r.Handle("/metrics", promhttp.Handler())
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authClient)
