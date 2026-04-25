@@ -4,6 +4,7 @@ import (
 	"github.com/biruk/bus-ticket/api-gateway/internal/handler"
 	"github.com/biruk/bus-ticket/api-gateway/internal/middleware"
 	pb "github.com/biruk/bus-ticket/api-gateway/internal/proto"
+	fleetpb "github.com/biruk/bus-ticket/api-gateway/internal/proto/fleet"
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -11,7 +12,7 @@ import (
 )
 
 // New constructs the chi router with the full middleware pipeline and all routes.
-func New(authClient pb.AuthServiceClient, logger *zap.Logger, rps float64, burst int) *chi.Mux {
+func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient, logger *zap.Logger, rps float64, burst int) *chi.Mux {
 	r := chi.NewRouter()
 
 	// --- Global middleware (applied to every request) ---
@@ -27,6 +28,7 @@ func New(authClient pb.AuthServiceClient, logger *zap.Logger, rps float64, burst
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authClient)
+	fleetHandler := handler.NewFleetHandler(fleetClient)
 
 	// --- Routes ---
 	r.Route("/api/v1", func(r chi.Router) {
@@ -42,6 +44,16 @@ func New(authClient pb.AuthServiceClient, logger *zap.Logger, rps float64, burst
 				r.Use(middleware.Auth(authClient))
 				r.Get("/me", authHandler.GetMe)
 			})
+		})
+
+		// Fleet routes - basic setup
+		r.Route("/fleet", func(r chi.Router) {
+			r.Post("/buses", fleetHandler.CreateBus)
+			r.Get("/buses", fleetHandler.ListBuses)
+			r.Post("/routes", fleetHandler.CreateRoute)
+			r.Get("/routes", fleetHandler.ListRoutes)
+			r.Post("/schedules", fleetHandler.CreateSchedule)
+			r.Get("/schedules", fleetHandler.ListSchedules)
 		})
 	})
 

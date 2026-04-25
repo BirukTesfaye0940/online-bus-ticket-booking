@@ -38,8 +38,15 @@ func main() {
 	defer authConn.Close()
 	logger.Info("connected to auth-service", zap.String("addr", cfg.AuthServiceAddr))
 
+	fleetClient, fleetConn, err := client.NewFleetClient(cfg.FleetServiceAddr)
+	if err != nil {
+		logger.Fatal("failed to connect to fleet-service", zap.Error(err))
+	}
+	defer fleetConn.Close()
+	logger.Info("connected to fleet-service", zap.String("addr", cfg.FleetServiceAddr))
+
 	// 4. Build the router with the full middleware pipeline
-	r := router.New(authClient, logger, cfg.RateLimitRequestsPerSecond, cfg.RateLimitBurst)
+	r := router.New(authClient, fleetClient, logger, cfg.RateLimitRequestsPerSecond, cfg.RateLimitBurst)
 
 	// 5. Configure the HTTP server
 	srv := &http.Server{
