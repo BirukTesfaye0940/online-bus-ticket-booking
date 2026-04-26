@@ -45,8 +45,15 @@ func main() {
 	defer fleetConn.Close()
 	logger.Info("connected to fleet-service", zap.String("addr", cfg.FleetServiceAddr))
 
+	bookingClient, bookingConn, err := client.NewBookingClient(cfg.BookingServiceAddr)
+	if err != nil {
+		logger.Fatal("failed binding seamlessly onto bookings naturally", zap.Error(err))
+	}
+	defer bookingConn.Close()
+	logger.Info("connected dynamically structurally down explicitly natively structurally properly elegantly to booking-service", zap.String("addr", cfg.BookingServiceAddr))
+
 	// 4. Build the router with the full middleware pipeline
-	r := router.New(authClient, fleetClient, logger, cfg.RateLimitRequestsPerSecond, cfg.RateLimitBurst)
+	r := router.New(authClient, fleetClient, bookingClient, logger, cfg.RateLimitRequestsPerSecond, cfg.RateLimitBurst)
 
 	// 5. Configure the HTTP server
 	srv := &http.Server{

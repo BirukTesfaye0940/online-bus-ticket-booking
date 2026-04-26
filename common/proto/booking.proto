@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package booking;
+
+option go_package = "github.com/biruk/bus-ticket/booking-service/proto";
+
+service BookingService {
+  rpc InitiateBooking(InitiateBookingRequest) returns (BookingResponse);
+  rpc ConfirmBooking(ConfirmBookingRequest) returns (BookingResponse);
+  rpc CancelBooking(CancelBookingRequest) returns (BookingResponse);
+  rpc ListUserBookings(ListUserBookingsRequest) returns (ListBookingsResponse);
+}
+
+message InitiateBookingRequest {
+  string user_id = 1;
+  string schedule_id = 2;
+  string seat_number = 3;
+  double price = 4;
+}
+
+message ConfirmBookingRequest {
+  string booking_id = 1;
+  string user_id = 2;
+}
+
+message CancelBookingRequest {
+  string booking_id = 1;
+  string user_id = 2;
+}
+
+message ListUserBookingsRequest {
+  string user_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message BookingResponse {
+  string id = 1;
+  string user_id = 2;
+  string schedule_id = 3;
+  string seat_number = 4;
+  string status = 5;
+  double price = 6;
+  string created_at = 7;
+}
+
+message ListBookingsResponse {
+  repeated BookingResponse bookings = 1;
+}

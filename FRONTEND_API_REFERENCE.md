@@ -170,3 +170,27 @@ Registers a new bus entity to the fleet.
 ### **List Schedules**
 * **Method:** `GET`
 * **Endpoint:** `/api/v1/fleet/schedules`
+
+---
+
+## 3. Booking Service
+
+### **Initiate Booking**
+* **Method:** `POST`
+* **Endpoint:** `/api/v1/bookings`
+* **Headers:** `Authorization: Bearer <jwt_token>`, `Content-Type: application/json`
+
+**Request Body:**
+```json
+{
+  "schedule_id": "uuid-string",
+  "seat_number": "A1",
+  "price": 450.00
+}
+```
+
+### **List My Bookings**
+* **Method:** `GET`
+* **Endpoint:** `/api/v1/bookings?limit=10&offset=0`
+* **Headers:** `Authorization: Bearer <jwt_token>`
+

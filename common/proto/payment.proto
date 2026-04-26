@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = "github.com/biruk/bus-ticket/payment-service/proto";
+
+service PaymentService {
+  rpc ProcessPayment(ProcessPaymentRequest) returns (PaymentResponse);
+}
+
+message ProcessPaymentRequest {
+  string user_id = 1;
+  string booking_id = 2;
+  double amount = 3;
+  string provider = 4; // e.g. Telebirr, Chapa
+}
+
+message PaymentResponse {
+  string transaction_id = 1;
+  bool success = 2;
+  string message = 3;
+}

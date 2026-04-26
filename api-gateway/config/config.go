@@ -9,8 +9,9 @@ type Config struct {
 	HTTPPort string `mapstructure:"HTTP_PORT"`
 
 	// Upstream gRPC service addresses
-	AuthServiceAddr  string `mapstructure:"AUTH_SERVICE_ADDR"`
-	FleetServiceAddr string `mapstructure:"FLEET_SERVICE_ADDR"`
+	AuthServiceAddr    string `mapstructure:"AUTH_SERVICE_ADDR"`
+	FleetServiceAddr   string `mapstructure:"FLEET_SERVICE_ADDR"`
+	BookingServiceAddr string `mapstructure:"BOOKING_SERVICE_ADDR"`
 
 	// Rate limiting
 	RateLimitRequestsPerSecond float64 `mapstructure:"RATE_LIMIT_RPS"`
@@ -21,6 +22,7 @@ func Load() (*Config, error) {
 	viper.SetDefault("HTTP_PORT", "8080")
 	viper.SetDefault("AUTH_SERVICE_ADDR", "localhost:50051")
 	viper.SetDefault("FLEET_SERVICE_ADDR", "localhost:50052")
+	viper.SetDefault("BOOKING_SERVICE_ADDR", "localhost:50053")
 	viper.SetDefault("RATE_LIMIT_RPS", 10)
 	viper.SetDefault("RATE_LIMIT_BURST", 20)
 

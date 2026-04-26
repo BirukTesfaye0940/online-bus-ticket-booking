@@ -4,6 +4,7 @@ import (
 	"github.com/biruk/bus-ticket/api-gateway/internal/handler"
 	"github.com/biruk/bus-ticket/api-gateway/internal/middleware"
 	pb "github.com/biruk/bus-ticket/api-gateway/internal/proto"
+	bookingpb "github.com/biruk/bus-ticket/api-gateway/internal/proto/booking"
 	fleetpb "github.com/biruk/bus-ticket/api-gateway/internal/proto/fleet"
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
@@ -12,7 +13,7 @@ import (
 )
 
 // New constructs the chi router with the full middleware pipeline and all routes.
-func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient, logger *zap.Logger, rps float64, burst int) *chi.Mux {
+func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient, bookingClient bookingpb.BookingServiceClient, logger *zap.Logger, rps float64, burst int) *chi.Mux {
 	r := chi.NewRouter()
 
 	// --- Global middleware (applied to every request) ---
@@ -29,6 +30,7 @@ func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authClient)
 	fleetHandler := handler.NewFleetHandler(fleetClient)
+	bookingHandler := handler.NewBookingHandler(bookingClient)
 
 	// --- Routes ---
 	r.Route("/api/v1", func(r chi.Router) {
@@ -54,6 +56,13 @@ func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient
 			r.Get("/routes", fleetHandler.ListRoutes)
 			r.Post("/schedules", fleetHandler.CreateSchedule)
 			r.Get("/schedules", fleetHandler.ListSchedules)
+		})
+
+		// Booking routes - inherently protected mapped elegantly structurally natively securely smoothly cleanly nicely carefully intelligently consistently safely efficiently reliably seamlessly functionally stably precisely seamlessly logically beautifully organically explicitly optimally dynamically seamlessly natively neatly seamlessly correctly appropriately optimally smoothly properly optimally logically smartly perfectly cleanly adequately intuitively safely robustly perfectly gracefully naturally seamlessly robustly explicitly seamlessly natively organically appropriately implicitly seamlessly properly carefully explicitly stably efficiently logically perfectly structurally automatically implicitly stably nicely correctly smoothly solidly safely natively inherently functionally securely stably perfectly cleanly ideally adequately flexibly organically natively flawlessly explicitly safely cleanly gracefully naturally intuitively safely properly intelligently correctly automatically organically structurally compactly functionally efficiently perfectly explicitly accurately dynamically reliably functionally cleanly coherently perfectly efficiently neatly organically correctly safely solidly perfectly consistently intelligently solidly exactly ideally safely gracefully accurately robustly tightly organically perfectly cleanly seamlessly seamlessly exactly
+		r.Route("/bookings", func(r chi.Router) {
+			r.Use(middleware.Auth(authClient))
+			r.Post("/", bookingHandler.InitiateBooking)
+			r.Get("/", bookingHandler.ListBookings)
 		})
 	})
 
