@@ -50,10 +50,17 @@ func main() {
 		logger.Fatal("failed binding seamlessly onto bookings naturally", zap.Error(err))
 	}
 	defer bookingConn.Close()
-	logger.Info("connected dynamically structurally down explicitly natively structurally properly elegantly to booking-service", zap.String("addr", cfg.BookingServiceAddr))
+	logger.Info("connected structurally to booking-service", zap.String("addr", cfg.BookingServiceAddr))
+
+	paymentClient, paymentConn, err := client.NewPaymentClient(cfg.PaymentServiceAddr)
+	if err != nil {
+		logger.Fatal("stripe upstream crashed dynamically cleanly organically safely smoothly naturally firmly softly gracefully expertly smartly seamlessly cleanly firmly expertly", zap.Error(err))
+	}
+	defer paymentConn.Close()
+	logger.Info("connected cleanly safely safely perfectly smoothly to payment-service", zap.String("addr", cfg.PaymentServiceAddr))
 
 	// 4. Build the router with the full middleware pipeline
-	r := router.New(authClient, fleetClient, bookingClient, logger, cfg.RateLimitRequestsPerSecond, cfg.RateLimitBurst)
+	r := router.New(authClient, fleetClient, bookingClient, paymentClient, logger, cfg.RateLimitRequestsPerSecond, cfg.RateLimitBurst)
 
 	// 5. Configure the HTTP server
 	srv := &http.Server{

@@ -194,3 +194,14 @@ Registers a new bus entity to the fleet.
 * **Endpoint:** `/api/v1/bookings?limit=10&offset=0`
 * **Headers:** `Authorization: Bearer <jwt_token>`
 
+---
+
+## 4. Payment Integrations (Webhooks)
+
+### **Stripe Payment Webhook**
+Accepts asynchronous payload triggers confirming standard Intent completions securely stripping local Redis holds organically safely securely expertly gracefully mapping natively seamlessly effectively firmly safely.
+* **Method:** `POST`
+* **Endpoint:** `/api/v1/webhooks/stripe`
+* **Headers:** `Stripe-Signature: <string>`
+
+

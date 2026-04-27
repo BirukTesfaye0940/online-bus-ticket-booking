@@ -262,6 +262,7 @@ type BookingResponse struct {
 	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
 	Price         float64                `protobuf:"fixed64,6,opt,name=price,proto3" json:"price,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ClientSecret  string                 `protobuf:"bytes,8,opt,name=client_secret,json=clientSecret,proto3" json:"client_secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -345,6 +346,13 @@ func (x *BookingResponse) GetCreatedAt() string {
 	return ""
 }
 
+func (x *BookingResponse) GetClientSecret() string {
+	if x != nil {
+		return x.ClientSecret
+	}
+	return ""
+}
+
 type ListBookingsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Bookings      []*BookingResponse     `protobuf:"bytes,1,rep,name=bookings,proto3" json:"bookings,omitempty"`
@@ -412,7 +420,7 @@ const file_booking_proto_rawDesc = "" +
 	"\x17ListUserBookingsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\"\xc9\x01\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"\xee\x01\n" +
 	"\x0fBookingResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1f\n" +
@@ -423,7 +431,8 @@ const file_booking_proto_rawDesc = "" +
 	"\x06status\x18\x05 \x01(\tR\x06status\x12\x14\n" +
 	"\x05price\x18\x06 \x01(\x01R\x05price\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\a \x01(\tR\tcreatedAt\"L\n" +
+	"created_at\x18\a \x01(\tR\tcreatedAt\x12#\n" +
+	"\rclient_secret\x18\b \x01(\tR\fclientSecret\"L\n" +
 	"\x14ListBookingsResponse\x124\n" +
 	"\bbookings\x18\x01 \x03(\v2\x18.booking.BookingResponseR\bbookings2\xc9\x02\n" +
 	"\x0eBookingService\x12L\n" +

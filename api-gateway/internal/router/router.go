@@ -6,6 +6,7 @@ import (
 	pb "github.com/biruk/bus-ticket/api-gateway/internal/proto"
 	bookingpb "github.com/biruk/bus-ticket/api-gateway/internal/proto/booking"
 	fleetpb "github.com/biruk/bus-ticket/api-gateway/internal/proto/fleet"
+	paymentpb "github.com/biruk/bus-ticket/api-gateway/internal/proto/payment"
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -13,7 +14,7 @@ import (
 )
 
 // New constructs the chi router with the full middleware pipeline and all routes.
-func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient, bookingClient bookingpb.BookingServiceClient, logger *zap.Logger, rps float64, burst int) *chi.Mux {
+func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient, bookingClient bookingpb.BookingServiceClient, paymentClient paymentpb.PaymentServiceClient, logger *zap.Logger, rps float64, burst int) *chi.Mux {
 	r := chi.NewRouter()
 
 	// --- Global middleware (applied to every request) ---
@@ -34,6 +35,11 @@ func New(authClient pb.AuthServiceClient, fleetClient fleetpb.FleetServiceClient
 
 	// --- Routes ---
 	r.Route("/api/v1", func(r chi.Router) {
+		
+		r.Route("/webhooks", func(r chi.Router) {
+			webhookHandler := handler.NewWebhookHandler(paymentClient)
+			r.Post("/stripe", webhookHandler.StripeWebhook)
+		})
 
 		// Auth routes — mixed public/protected
 		r.Route("/auth", func(r chi.Router) {
