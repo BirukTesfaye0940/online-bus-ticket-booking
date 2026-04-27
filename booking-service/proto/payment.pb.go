@@ -21,30 +21,29 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ProcessPaymentRequest struct {
+type CreatePaymentIntentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	BookingId     string                 `protobuf:"bytes,2,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
 	Amount        float64                `protobuf:"fixed64,3,opt,name=amount,proto3" json:"amount,omitempty"`
-	Provider      string                 `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"` // e.g. Telebirr, Chapa
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ProcessPaymentRequest) Reset() {
-	*x = ProcessPaymentRequest{}
+func (x *CreatePaymentIntentRequest) Reset() {
+	*x = CreatePaymentIntentRequest{}
 	mi := &file_payment_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ProcessPaymentRequest) String() string {
+func (x *CreatePaymentIntentRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProcessPaymentRequest) ProtoMessage() {}
+func (*CreatePaymentIntentRequest) ProtoMessage() {}
 
-func (x *ProcessPaymentRequest) ProtoReflect() protoreflect.Message {
+func (x *CreatePaymentIntentRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_payment_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,62 +55,53 @@ func (x *ProcessPaymentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProcessPaymentRequest.ProtoReflect.Descriptor instead.
-func (*ProcessPaymentRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreatePaymentIntentRequest.ProtoReflect.Descriptor instead.
+func (*CreatePaymentIntentRequest) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ProcessPaymentRequest) GetUserId() string {
+func (x *CreatePaymentIntentRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
 	return ""
 }
 
-func (x *ProcessPaymentRequest) GetBookingId() string {
+func (x *CreatePaymentIntentRequest) GetBookingId() string {
 	if x != nil {
 		return x.BookingId
 	}
 	return ""
 }
 
-func (x *ProcessPaymentRequest) GetAmount() float64 {
+func (x *CreatePaymentIntentRequest) GetAmount() float64 {
 	if x != nil {
 		return x.Amount
 	}
 	return 0
 }
 
-func (x *ProcessPaymentRequest) GetProvider() string {
-	if x != nil {
-		return x.Provider
-	}
-	return ""
-}
-
-type PaymentResponse struct {
+type CreatePaymentIntentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TransactionId string                 `protobuf:"bytes,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
-	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	ClientSecret  string                 `protobuf:"bytes,1,opt,name=client_secret,json=clientSecret,proto3" json:"client_secret,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PaymentResponse) Reset() {
-	*x = PaymentResponse{}
+func (x *CreatePaymentIntentResponse) Reset() {
+	*x = CreatePaymentIntentResponse{}
 	mi := &file_payment_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PaymentResponse) String() string {
+func (x *CreatePaymentIntentResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PaymentResponse) ProtoMessage() {}
+func (*CreatePaymentIntentResponse) ProtoMessage() {}
 
-func (x *PaymentResponse) ProtoReflect() protoreflect.Message {
+func (x *CreatePaymentIntentResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_payment_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -123,49 +113,134 @@ func (x *PaymentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PaymentResponse.ProtoReflect.Descriptor instead.
-func (*PaymentResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreatePaymentIntentResponse.ProtoReflect.Descriptor instead.
+func (*CreatePaymentIntentResponse) Descriptor() ([]byte, []int) {
 	return file_payment_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PaymentResponse) GetTransactionId() string {
+func (x *CreatePaymentIntentResponse) GetClientSecret() string {
 	if x != nil {
-		return x.TransactionId
+		return x.ClientSecret
 	}
 	return ""
 }
 
-func (x *PaymentResponse) GetSuccess() bool {
+type WebhookRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Payload       []byte                 `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"`
+	Signature     string                 `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WebhookRequest) Reset() {
+	*x = WebhookRequest{}
+	mi := &file_payment_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WebhookRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WebhookRequest) ProtoMessage() {}
+
+func (x *WebhookRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WebhookRequest.ProtoReflect.Descriptor instead.
+func (*WebhookRequest) Descriptor() ([]byte, []int) {
+	return file_payment_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *WebhookRequest) GetPayload() []byte {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *WebhookRequest) GetSignature() string {
+	if x != nil {
+		return x.Signature
+	}
+	return ""
+}
+
+type WebhookResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WebhookResponse) Reset() {
+	*x = WebhookResponse{}
+	mi := &file_payment_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WebhookResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WebhookResponse) ProtoMessage() {}
+
+func (x *WebhookResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WebhookResponse.ProtoReflect.Descriptor instead.
+func (*WebhookResponse) Descriptor() ([]byte, []int) {
+	return file_payment_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *WebhookResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
 	return false
 }
 
-func (x *PaymentResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
 var File_payment_proto protoreflect.FileDescriptor
 
 const file_payment_proto_rawDesc = "" +
 	"\n" +
-	"\rpayment.proto\x12\apayment\"\x83\x01\n" +
-	"\x15ProcessPaymentRequest\x12\x17\n" +
+	"\rpayment.proto\x12\apayment\"l\n" +
+	"\x1aCreatePaymentIntentRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
 	"\n" +
 	"booking_id\x18\x02 \x01(\tR\tbookingId\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x01R\x06amount\x12\x1a\n" +
-	"\bprovider\x18\x04 \x01(\tR\bprovider\"l\n" +
-	"\x0fPaymentResponse\x12%\n" +
-	"\x0etransaction_id\x18\x01 \x01(\tR\rtransactionId\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage2\\\n" +
-	"\x0ePaymentService\x12J\n" +
-	"\x0eProcessPayment\x12\x1e.payment.ProcessPaymentRequest\x1a\x18.payment.PaymentResponseB3Z1github.com/biruk/bus-ticket/payment-service/protob\x06proto3"
+	"\x06amount\x18\x03 \x01(\x01R\x06amount\"B\n" +
+	"\x1bCreatePaymentIntentResponse\x12#\n" +
+	"\rclient_secret\x18\x01 \x01(\tR\fclientSecret\"H\n" +
+	"\x0eWebhookRequest\x12\x18\n" +
+	"\apayload\x18\x01 \x01(\fR\apayload\x12\x1c\n" +
+	"\tsignature\x18\x02 \x01(\tR\tsignature\"+\n" +
+	"\x0fWebhookResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xb6\x01\n" +
+	"\x0ePaymentService\x12`\n" +
+	"\x13CreatePaymentIntent\x12#.payment.CreatePaymentIntentRequest\x1a$.payment.CreatePaymentIntentResponse\x12B\n" +
+	"\rHandleWebhook\x12\x17.payment.WebhookRequest\x1a\x18.payment.WebhookResponseB3Z1github.com/biruk/bus-ticket/payment-service/protob\x06proto3"
 
 var (
 	file_payment_proto_rawDescOnce sync.Once
@@ -179,16 +254,20 @@ func file_payment_proto_rawDescGZIP() []byte {
 	return file_payment_proto_rawDescData
 }
 
-var file_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_payment_proto_goTypes = []any{
-	(*ProcessPaymentRequest)(nil), // 0: payment.ProcessPaymentRequest
-	(*PaymentResponse)(nil),       // 1: payment.PaymentResponse
+	(*CreatePaymentIntentRequest)(nil),  // 0: payment.CreatePaymentIntentRequest
+	(*CreatePaymentIntentResponse)(nil), // 1: payment.CreatePaymentIntentResponse
+	(*WebhookRequest)(nil),              // 2: payment.WebhookRequest
+	(*WebhookResponse)(nil),             // 3: payment.WebhookResponse
 }
 var file_payment_proto_depIdxs = []int32{
-	0, // 0: payment.PaymentService.ProcessPayment:input_type -> payment.ProcessPaymentRequest
-	1, // 1: payment.PaymentService.ProcessPayment:output_type -> payment.PaymentResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: payment.PaymentService.CreatePaymentIntent:input_type -> payment.CreatePaymentIntentRequest
+	2, // 1: payment.PaymentService.HandleWebhook:input_type -> payment.WebhookRequest
+	1, // 2: payment.PaymentService.CreatePaymentIntent:output_type -> payment.CreatePaymentIntentResponse
+	3, // 3: payment.PaymentService.HandleWebhook:output_type -> payment.WebhookResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -205,7 +284,7 @@ func file_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_proto_rawDesc), len(file_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

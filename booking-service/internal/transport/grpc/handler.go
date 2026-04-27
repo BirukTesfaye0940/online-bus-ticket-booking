@@ -19,19 +19,20 @@ func NewBookingHandler(service domain.BookingService) *BookingHandler {
 }
 
 func (h *BookingHandler) InitiateBooking(ctx context.Context, req *pb.InitiateBookingRequest) (*pb.BookingResponse, error) {
-	b, err := h.service.InitiateBooking(ctx, req.UserId, req.ScheduleId, req.SeatNumber, req.Price)
+	b, secret, err := h.service.InitiateBooking(ctx, req.UserId, req.ScheduleId, req.SeatNumber, req.Price)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "booking failed structurally: %v", err)
 	}
 
 	return &pb.BookingResponse{
-		Id:         b.ID,
-		UserId:     b.UserID,
-		ScheduleId: b.ScheduleID,
-		SeatNumber: b.SeatNumber,
-		Status:     b.Status,
-		Price:      b.Price,
-		CreatedAt:  b.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		Id:           b.ID,
+		UserId:       b.UserID,
+		ScheduleId:   b.ScheduleID,
+		SeatNumber:   b.SeatNumber,
+		Status:       b.Status,
+		Price:        b.Price,
+		CreatedAt:    b.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		ClientSecret: secret,
 	}, nil
 }
 

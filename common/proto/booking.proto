@@ -42,6 +42,7 @@ message BookingResponse {
   string status = 5;
   double price = 6;
   string created_at = 7;
+  string client_secret = 8;
 }
 
 message ListBookingsResponse {

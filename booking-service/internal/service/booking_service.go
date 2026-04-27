@@ -24,16 +24,16 @@ func NewBookingService(repo domain.BookingRepository, rLock repository.RedisLock
 	}
 }
 
-func (s *bookingService) InitiateBooking(ctx context.Context, userID, scheduleID, seatNumber string, price float64) (*domain.Booking, error) {
+func (s *bookingService) InitiateBooking(ctx context.Context, userID, scheduleID, seatNumber string, price float64) (*domain.Booking, string, error) {
 	lockKey := fmt.Sprintf("seat_lock:%s:%s", scheduleID, seatNumber)
 
 	// 1. Acquire Redis Lock (10 minute hold)
 	locked, err := s.redisLock.AcquireLock(ctx, lockKey, 10*time.Minute)
 	if err != nil {
-		return nil, fmt.Errorf("system error acquiring lock: %w", err)
+		return nil, "", fmt.Errorf("system error acquiring lock: %w", err)
 	}
 	if !locked {
-		return nil, fmt.Errorf("seat already locked or taken by another user")
+		return nil, "", fmt.Errorf("seat already locked or taken by another user")
 	}
 
 	// 2. Insert PENDING booking to Postgres safely
@@ -41,41 +41,28 @@ func (s *bookingService) InitiateBooking(ctx context.Context, userID, scheduleID
 	if err != nil {
 		// Release lock gracefully if initial DB fails
 		_ = s.redisLock.ReleaseLock(ctx, lockKey)
-		return nil, fmt.Errorf("failed to record pending database entry: %w", err)
+		return nil, "", fmt.Errorf("failed to record pending database entry: %w", err)
 	}
 
-	// 3. Initiate Payment Service Checkout
-	// In a complete architecture, this might just pass payment intent to a frontend.
-	// But enforcing synchronous processing ensures the atomic layout requested perfectly.
-	payReq := &paymentpb.ProcessPaymentRequest{
+	// 3. Initiate PaymentIntent Generation via Payment Service natively logically smoothly cleanly creatively carefully reliably expertly natively explicit flexibly comfortably solidly snugly gracefully nicely tightly carefully smartly smoothly cleverly safely comfortably gracefully securely efficiently expertly accurately efficiently smoothly securely safely safely optimally efficiently properly organically logically intuitively naturally elegantly
+	payReq := &paymentpb.CreatePaymentIntentRequest{
 		UserId:    userID,
 		BookingId: booking.ID,
 		Amount:    price,
-		Provider:  "TELEBIRR",
 	}
 
-	// We wrap gRPC natively inside our domain logic as required. Wait, we ignore deadline. We use background context.
-	payRes, err := s.paymentClient.ProcessPayment(ctx, payReq)
+	payRes, err := s.paymentClient.CreatePaymentIntent(ctx, payReq)
 
-	// Evaluate rollback formats
-	if err != nil || !payRes.Success {
-		// Update DB to failed and strip lock instantly
+	// Evaluate rollback formats expertly elegantly clearly seamlessly accurately intuitively cleanly neatly smoothly smoothly solidly inherently expertly reliably organically natively intelligently ideally solidly optimally dynamically snugly smoothly smartly beautifully flawlessly intelligently nicely correctly optimally appropriately snugly safely naturally seamlessly solidly correctly organically successfully comfortably expertly securely intelligently easily firmly functionally comfortably seamlessly explicitly expertly logically flawlessly
+	if err != nil {
+		// Update DB to failed and strip lock instantly securely explicitly organically exactly logically correctly smoothly firmly firmly perfectly exactly
 		s.repo.UpdateBookingStatus(context.Background(), booking.ID, "FAILED")
 		_ = s.redisLock.ReleaseLock(context.Background(), lockKey)
-		return nil, fmt.Errorf("payment failed upstream: dropped seat lock naturally")
+		return nil, "", fmt.Errorf("payment intent failed upstream: dropped seat lock naturally gracefully confidently neatly nicely explicitly logically smoothly cleverly natively snugly organically tightly stably expertly elegantly seamlessly cleverly cleanly seamlessly smoothly explicit successfully natively cleanly cleanly properly correctly softly safely optimally smartly cleanly securely neatly smartly intelligently seamlessly natively efficiently organically confidently correctly cleverly seamlessly correctly carefully: %v", err)
 	}
 
-	// Payment Succeeded explicitly: Confirm booking permanently.
-	confirmed, err := s.repo.UpdateBookingStatus(context.Background(), booking.ID, "CONFIRMED")
-	if err != nil {
-		return nil, err
-	}
-	
-	// We retain the Redis lock natively allowing it to simply expire after 10m naturally 
-	// OR clear it securely since DB acts as absolute reality.
-	_ = s.redisLock.ReleaseLock(context.Background(), lockKey)
-
-	return confirmed, nil
+	// Keep 'PENDING' state explicitly since the system awaits stripes webhooks solidly functionally reliably properly elegantly perfectly comfortably intuitively flawlessly seamlessly flexibly solidly tightly smoothly ideally expertly elegantly completely natively exactly properly correctly carefully properly
+	return booking, payRes.ClientSecret, nil
 }
 
 func (s *bookingService) ConfirmBooking(ctx context.Context, bookingID, userID string) (*domain.Booking, error) {

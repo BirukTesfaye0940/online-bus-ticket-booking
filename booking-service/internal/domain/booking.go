@@ -23,7 +23,7 @@ type BookingRepository interface {
 }
 
 type BookingService interface {
-	InitiateBooking(ctx context.Context, userID, scheduleID, seatNumber string, price float64) (*Booking, error)
+	InitiateBooking(ctx context.Context, userID, scheduleID, seatNumber string, price float64) (*Booking, string, error)
 	ConfirmBooking(ctx context.Context, bookingID, userID string) (*Booking, error)
 	CancelBooking(ctx context.Context, bookingID, userID string) (*Booking, error)
 	ListUserBookings(ctx context.Context, userID string, limit, offset int32) ([]*Booking, error)
